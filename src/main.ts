@@ -83,7 +83,11 @@ const GITHUB_API_URL = 'https://api.github.com'
   )
 
   try {
-    const address = await app.listen({ host: '0.0.0.0', port: 3333 })
+    const address = await app.listen({
+      host: '0.0.0.0',
+      port: Number(process.env.PORT ?? 3333)
+    })
+    
     console.log(`HTTP server running at ${address}`)
   } catch (error) {
     app.log.error(error)
