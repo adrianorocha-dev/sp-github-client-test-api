@@ -28,14 +28,14 @@ const GITHUB_API_URL = 'https://api.github.com'
     {
       schema: {
         querystring: z.object({
-          since: z.string()
+          since: z.string().optional()
         })
       }
     },
     async (request, reply) => {
       const { since } = request.query
 
-      const response = await fetch(`${GITHUB_API_URL}/users?since=${since}&per_page=20`)
+      const response = await fetch(`${GITHUB_API_URL}/users?since=${since ?? '0'}&per_page=20`)
 
       const users = await response.json();
 
