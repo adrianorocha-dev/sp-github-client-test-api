@@ -5,9 +5,12 @@ import {
   validatorCompiler,
   ZodTypeProvider
 } from 'fastify-type-provider-zod'
+
 import { z } from 'zod'
 
-(async () => {
+const GITHUB_API_URL = 'https://api.github.com'
+
+;(async () => {
   const app = fastify({ logger: true })
 
   app.setValidatorCompiler(validatorCompiler)
@@ -16,6 +19,65 @@ import { z } from 'zod'
   app.get('/', async (request, reply) => {
     return { message: 'Hello World' }
   })
+
+  app.withTypeProvider<ZodTypeProvider>().get(
+    '/api/users',
+    {
+      schema: {
+        querystring: z.object({
+          since: z.string()
+        })
+      }
+    },
+    async (request, reply) => {
+      const { since } = request.query
+
+      const response = await fetch(`${GITHUB_API_URL}/users?since=${since}`)
+
+      const users = await response.json();
+
+      return users
+  })
+
+  app.withTypeProvider<ZodTypeProvider>().get(
+    '/api/users/:username/details',
+    {
+      schema: {
+        params: z.object({
+          username: z.string()
+        })
+      }
+    },
+    async (request, reply) => {
+      const { username } = request.params;
+
+      const response = await fetch(`${GITHUB_API_URL}/users/${username}`)
+
+      const user = await response.json()
+
+      return user
+    }
+  )
+
+  app.withTypeProvider<ZodTypeProvider>().get(
+    '/api/users/:username/repos',
+    {
+      schema: {
+        params: z.object({
+          username: z.string()
+        })
+      }
+    },
+    async (request, reply) => {
+      const { username }= request.params
+
+      const response = await fetch(`${GITHUB_API_URL}/users/${username}/repos`)
+
+      const repos = await response.json()
+
+      return repos
+    }
+  )
 
   try {
     const address = await app.listen({ host: '0.0.0.0', port: 3333 })
