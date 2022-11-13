@@ -1,4 +1,5 @@
 import fastify from 'fastify'
+import cors from '@fastify/cors'
 
 import {
   serializerCompiler,
@@ -12,6 +13,8 @@ const GITHUB_API_URL = 'https://api.github.com'
 
 ;(async () => {
   const app = fastify({ logger: true })
+
+  await app.register(cors)
 
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
