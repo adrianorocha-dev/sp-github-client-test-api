@@ -35,7 +35,7 @@ const GITHUB_API_URL = 'https://api.github.com'
     async (request, reply) => {
       const { since } = request.query
 
-      const response = await fetch(`${GITHUB_API_URL}/users?since=${since}`)
+      const response = await fetch(`${GITHUB_API_URL}/users?since=${since}&per_page=20`)
 
       const users = await response.json();
 
